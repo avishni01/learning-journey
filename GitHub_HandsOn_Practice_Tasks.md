@@ -1,6 +1,6 @@
-### GitHub Learning Plan: Hands-On Practice Tasks
+# GitHub Learning Plan: Hands-On Practice Tasks
 
-#### Basic Tasks
+## Basic Tasks
 
 1. **Initialize a Repository**:
 
@@ -89,7 +89,7 @@
      3. Add comments or approve changes as needed.
      4. Click "Merge pull request" if you have write access and want to merge the changes.
 
-#### Intermediate Tasks
+## Intermediate Tasks
 
 7. **Working with Tags**:
    - Create and list tags.
@@ -137,7 +137,7 @@
     - Create releases in GitHub.
     - Manage release notes.
 
-#### Real-World Scenarios and Problems
+## Real-World Scenarios and Problems
 
 20. **Bug Tracking and Issue Management**:
     - Create and manage issues.
