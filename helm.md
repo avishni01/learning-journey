@@ -116,9 +116,6 @@ ingress:
 
 Helm charts are an invaluable tool for managing Kubernetes applications. By packaging applications into charts, Helm simplifies deployment, version control, and sharing of Kubernetes applications. This guide provided an introduction to Helm charts, their use cases, and examples to get started. For more detailed information, explore the references and additional learning links provided.
 
-Certainly! Here's a comprehensive "Zero to Hero" guide using Helm written in Markdown format:
-
-```markdown
 # Zero to Hero with Helm
 
 ## Introduction
