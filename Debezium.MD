@@ -207,3 +207,68 @@ Debezium provides a robust and flexible solution for capturing and streaming dat
 
 For more detailed information, refer to the [Debezium documentation](https://debezium.io/documentation/).
 
+# Handling Errors When Sending Data from MSSQL to Kafka with Debezium
+
+## Alternative Architecture for Error Handling
+
+While Debezium itself does not provide a direct mechanism for handling errors through Data Query Language (DQL) for the sink, you can implement a robust error handling architecture using a combination of Kafka features and external tools. Here is a step-by-step guide to setting up an alternative architecture for handling errors:
+
+### 1. Kafka Dead Letter Queue (DLQ)
+
+A Dead Letter Queue (DLQ) is a standard pattern for handling messages that cannot be processed successfully. In Kafka, this can be implemented by configuring connectors and consumers to route problematic messages to a separate topic.
+
+#### Steps to Set Up a DLQ:
+
+1. **Create a DLQ Topic**
+   - Create a topic in Kafka that will be used as the DLQ:
+     ```sh
+     kafka-topics.sh --create --topic debezium-dlq --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+     ```
+
+2. **Configure Kafka Connect to Use DLQ**
+   - Modify the Kafka Connect worker configuration to specify the DLQ topic:
+     ```properties
+     errors.deadletterqueue.topic.name=debezium-dlq
+     errors.deadletterqueue.context.headers.enable=true
+     errors.retry.delay.max.ms=60000
+     errors.retry.timeout=0
+     ```
+
+3. **Configure Debezium Connector for Error Handling**
+   - Update the Debezium connector configuration to enable error handling:
+     ```json
+     {
+       "name": "mssql-connector",
+       "config": {
+         "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
+         "tasks.max": "1",
+         "database.hostname": "localhost",
+         "database.port": "1433",
+         "database.user": "debezium",
+         "database.password": "dbz",
+         "database.server.name": "server1",
+         "database.names": "mydb",
+         "table.include.list": "dbo.YourTableName",
+         "database.history.kafka.bootstrap.servers": "localhost:9092",
+         "database.history.kafka.topic": "schema-changes.mydb",
+         "errors.log.enable": "true",
+         "errors.deadletterqueue.topic.name": "debezium-dlq"
+       }
+     }
+     ```
+
+### 2. Monitoring and Alerting
+
+Implement monitoring and alerting to be notified when errors occur and messages are routed to the DLQ.
+
+#### Steps for Monitoring and Alerting:
+
+1. **Set Up Kafka Monitoring Tools**
+   - Use Kafka monitoring tools like Confluent Control Center, Kafka Manager, or Prometheus with Grafana to monitor Kafka topics, including the DLQ.
+
+2. **Set Up Alerts**
+   - Configure alerts for high message rates in the DLQ topic using your monitoring tool. For example, in Prometheus, you can create an alert rule:
+     ```yaml
+     groups:
+     - name: KafkaAlerts
+    
